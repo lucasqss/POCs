@@ -1,0 +1,73 @@
+
+services:
+  elasticsearch:
+    image: elasticsearch:8.17.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+  kibana:
+    image: kibana:8.17.1
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - elastic
+
+  # If APM Server with docker compose have issue with elastic search network connectivity.
+  # Then use direct docker run command with same network.
+  # sudo docker run -d   --name apm-server-2   --cap-add CHOWN   --cap-add DAC_OVERRIDE   --cap-add SETGID   --cap-add SETUID   --network monitor_infra_elastic   -p 8200:8200   -e ELASTIC_APM_SERVER_URL=http://elasticsearch:9200   -e ELASTIC_APM_KIBANA_URL=http://kibana:5601   -e ELASTIC_APM_RUM_ENABLED=true   docker.elastic.co/apm/apm-server:8.15.0   apm-server -e   -E apm-server.rum.enabled=true   -E setup.kibana.host=http://kibana:5601   -E output.elasticsearch.hosts=["http://elasticsearch:9200"]   -E apm-server.kibana.enabled=true   -E apm-server.kibana.host=http://kibana:5601
+  apm-server:
+    image: apm/apm-server:8.17.1
+    container_name: apm-server
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+    networks:
+      - elastic
+    ports:
+      - "8200:8200"
+    environment:
+      - ELASTIC_APM_SERVER_URL=http://elasticsearch:9200
+      - ELASTIC_APM_KIBANA_URL=http://kibana:5601
+      - ELASTIC_APM_RUM_ENABLED=true
+    command: >
+      apm-server -e
+      -E apm-server.rum.enabled=true
+      -E setup.kibana.host=http://kibana:5601
+      -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
+      -E apm-server.kibana.enabled=true
+      -E apm-server.kibana.host=http://kibana:5601
+
+
+  otel-collector:
+    # Custom OpenTelemetry Collector with Elasticsearch exporter support
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+#    command: ["--config", "/etc/otel-collector-config.yaml"]
+    networks:
+      - elastic
+
+volumes:
+  es_data:
+
+networks:
+  elastic:
+    driver: bridge

@@ -56,10 +56,11 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-logging-gelf</artifactId>
+            <artifactId>quarkus-opentelemetry</artifactId>
         </dependency>
 
-<!--        TEST            -->
+
+        <!--        TEST            -->
 
         <dependency>
             <groupId>io.quarkus</groupId>
