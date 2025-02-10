@@ -58,6 +58,14 @@
         </dependency>
 
 
+        <!--        LOGS            -->
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-opentelemetry</artifactId>
+        </dependency>
+
+
         <!--        TEST            -->
 
         <dependency>
