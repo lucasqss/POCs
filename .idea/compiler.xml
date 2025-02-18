@@ -7,11 +7,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="bancos-de-dados" />
+        <module name="app-exemplo-transacao" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="app-exemplo-transacao" options="-parameters" />
       <module name="bancos-de-dados" options="-parameters" />
     </option>
   </component>
