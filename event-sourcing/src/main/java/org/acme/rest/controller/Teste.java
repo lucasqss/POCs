@@ -10,12 +10,13 @@ import org.acme.annotations.EventLog;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Path("/teste")
 @EventLog
 public class Teste {
 
     @GET
     @Path("/hello")
     public String obterTodos(@QueryParam("exemplo") String exemplo) {
-        return "Hello "+exemplo;
+        return "Hello " + exemplo;
     }
 }
