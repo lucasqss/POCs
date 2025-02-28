@@ -8,15 +8,14 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import java.util.List;
-import org.acme.annotations.EventLog;
 import org.acme.dominio.entidade.Exemplo;
 import org.acme.dominio.repository.ExemploRepository;
+
+import java.util.List;
 
 @Path("/registro")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@EventLog
 public class PersistenceRest {
 
     @Inject

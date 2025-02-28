@@ -4,16 +4,22 @@
 BEGIN
     EXECUTE IMMEDIATE 'DROP USER SIGLA CASCADE';
     EXECUTE IMMEDIATE 'DROP USER MICROSSERVICO CASCADE';
-            EXCEPTION
-            WHEN OTHERS THEN
-    IF SQLCODE != -1918 THEN
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -1918 THEN
             RAISE;
-END IF;
+        END IF;
 END;
 
 CREATE USER SIGLA IDENTIFIED BY cenha;
+ALTER USER SIGLA QUOTA UNLIMITED ON USERS;
+
 
 CREATE USER MICROSSERVICO IDENTIFIED BY cenha;
+
+--  Dando grants de conexao para o usuario
+GRANT CREATE SESSION TO MICROSSERVICO;
+GRANT CONNECT TO MICROSSERVICO;
 
 
 -- ROLES --
@@ -24,11 +30,11 @@ BEGIN
     EXECUTE IMMEDIATE 'DROP ROLE atualizar';
     EXECUTE IMMEDIATE 'DROP ROLE deletar';
     EXECUTE IMMEDIATE 'DROP ROLE inserir';
-            EXCEPTION
-            WHEN OTHERS THEN
-    IF SQLCODE != -1918 THEN
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -1919 THEN
             RAISE;
-END IF;
+        END IF;
 END;
 
 
@@ -37,33 +43,30 @@ CREATE ROLE atualizar;
 CREATE ROLE deletar;
 CREATE ROLE inserir;
 
-BEGIN
-            FOR rec IN (SELECT table_name FROM all_tables WHERE owner = 'SIGLA')
-        LOOP
-    EXECUTE IMMEDIATE 'GRANT SELECT ON SIGLA.' || rec.table_name || ' TO consultar';
-    EXECUTE IMMEDIATE 'GRANT INSERT ON SIGLA.' || rec.table_name || ' TO inserir';
-    EXECUTE IMMEDIATE 'GRANT UPDATE ON SIGLA.' || rec.table_name || ' TO atualizar';
-    EXECUTE IMMEDIATE 'GRANT DELETE ON SIGLA.' || rec.table_name || ' TO deletar';
-END LOOP;
-END;
 
--- GRANTS --
+-- CONFIGS SCHEMA --
+
+ALTER SESSION SET CURRENT_SCHEMA = SIGLA;
+
+grant select any table to consultar;
+grant update any table to atualizar;
+grant delete any table to deletar;
+grant insert any table to inserir;
+
 GRANT consultar TO MICROSSERVICO;
 GRANT atualizar TO MICROSSERVICO;
 GRANT deletar TO MICROSSERVICO;
 GRANT inserir TO MICROSSERVICO;
 
+ALTER SESSION SET CURRENT_SCHEMA = SIGLA;
 
--- TABELAS --
-
--- Versao do oracle para drop if exists para tabelas
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE REG_EVT_TST';
-            EXCEPTION
-            WHEN OTHERS THEN
-    IF SQLCODE != -942 THEN
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN
             RAISE;
-END IF;
+        END IF;
 END;
 
 CREATE TABLE REG_EVT_TST

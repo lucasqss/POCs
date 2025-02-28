@@ -3,18 +3,16 @@ package org.acme.interceptors;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
 import jakarta.annotation.Priority;
+import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import org.acme.annotations.EventLog;
-import org.acme.entidades.RegistroEvento;
+import org.acme.dominio.entidades.RegistroEvento;
+import org.acme.dominio.repository.RegistroEventoRepository;
 import org.jboss.logging.Logger;
 
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 
 @EventLog
 @Interceptor
@@ -23,12 +21,26 @@ public class EventLogInterceptor {
 
     private static final Logger LOGGER = Logger.getLogger(EventLogInterceptor.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Inject
+    RegistroEventoRepository repository;
 
     @AroundInvoke
-    @Transactional
     public Object log(InvocationContext context) throws Exception {
+        RegistroEvento logEntry = createLogEntry(context);
+
+        try {
+            Object result = context.proceed();
+            logEntry.setResposta(result != null ? result.toString() : "null");
+            repository.persistir(logEntry);
+            return result;
+        } catch (Exception e) {
+            logEntry.setExcecao(e.getMessage());
+            repository.persistir(logEntry);
+            throw e;
+        }
+    }
+
+    private RegistroEvento createLogEntry(InvocationContext context) {
         RegistroEvento logEntry = new RegistroEvento();
         logEntry.setNomeMetodo(context.getMethod().getName());
         logEntry.setParametros(Arrays.toString(context.getParameters()));
@@ -39,21 +51,7 @@ public class EventLogInterceptor {
         String requestId = spanContext.getTraceId();
         logEntry.setIdRequisicao(requestId);
 
-        try {
-            Object result = context.proceed();
-            logEntry.setResposta(result != null ? result.toString() : "null");
-            persistLogEntryAsync(logEntry);
-            return result;
-        } catch (Exception e) {
-            logEntry.setExcecao(e.getMessage());
-            persistLogEntryAsync(logEntry);
-            throw e;
-        }
-    }
-
-    private void persistLogEntryAsync(RegistroEvento logEntry) {
-        CompletableFuture.runAsync(() -> {
-            entityManager.persist(logEntry);
-        });
+        LOGGER.log(Logger.Level.INFO, logEntry.toString());
+        return logEntry;
     }
 }

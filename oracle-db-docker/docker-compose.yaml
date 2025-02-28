@@ -1,8 +1,8 @@
-version: '3.8'
-
 services:
   oracle-db:
-    image: gvenzl/oracle-free:23-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: oracle23c
     environment:
       - ORACLE_PASSWORD=cenha
@@ -11,14 +11,6 @@ services:
       - "5500:5500"
     volumes:
       - oracle_data:/opt/oracle/oradata
-      - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
-    healthcheck:
-      test: ["CMD-SHELL", "echo @ddl.sql | sqlplus system/cenha@localhost:1521/XE"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    command:
-      - echo @ddl.sql | sqlplus system/cenha@localhost:1521/XE
 
 volumes:
   oracle_data:
