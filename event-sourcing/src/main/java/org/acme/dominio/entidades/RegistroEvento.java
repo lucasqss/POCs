@@ -1,15 +1,14 @@
 package org.acme.dominio.entidades;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Getter
 @Setter
@@ -21,6 +20,9 @@ public class RegistroEvento {
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "USER_ID")
+    private String userId;
 
     @Column(name = "ID_RQSC")
     private String idRequisicao;
@@ -36,4 +38,8 @@ public class RegistroEvento {
 
     @Column(name = "EXCO")
     private String excecao;
+
+    @Column(name = "TS_RQSC")
+    private LocalDateTime timestamp;
+
 }

@@ -1,5 +1,6 @@
 package org.acme.interceptors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
 import jakarta.annotation.Priority;
@@ -24,13 +25,16 @@ public class EventLogInterceptor {
     @Inject
     RegistroEventoRepository repository;
 
+    @Inject
+    ObjectMapper objectMapper;
+
     @AroundInvoke
     public Object log(InvocationContext context) throws Exception {
         RegistroEvento logEntry = createLogEntry(context);
 
         try {
             Object result = context.proceed();
-            logEntry.setResposta(result != null ? result.toString() : "null");
+            logEntry.setResposta(result != null ? objectMapper.writeValueAsString(result) : "null");
             repository.persistir(logEntry);
             return result;
         } catch (Exception e) {
