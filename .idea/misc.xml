@@ -5,6 +5,11 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/bancos-de-dados/pom.xml" />
+        <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/app-aggregator/pom.xml" />
+        <option value="$PROJECT_DIR$/app-persistence/pom.xml" />
+        <option value="$PROJECT_DIR$/event-sourcing/pom.xml" />
+        <option value="$PROJECT_DIR$/componentes/libs/lib-event-sourcing/pom.xml" />
       </list>
     </option>
   </component>

@@ -6,15 +6,25 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="lib-event-sourcing" />
         <module name="bancos-de-dados" />
-        <module name="app-exemplo-transacao" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="aggregator" target="21" />
+      <module name="api-gateway" target="21" />
+      <module name="app-exemplo-transacao" target="21" />
+      <module name="persistence" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="aggregator" options="-parameters" />
+      <module name="api-gateway" options="-parameters" />
       <module name="app-exemplo-transacao" options="-parameters" />
       <module name="bancos-de-dados" options="-parameters" />
+      <module name="lib-event-sourcing" options="-parameters" />
+      <module name="persistence" options="-parameters" />
     </option>
   </component>
 </project>
