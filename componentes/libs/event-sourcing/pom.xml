@@ -4,86 +4,138 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.acme</groupId>
     <artifactId>event-sourcing</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-rc10-SNAPSHOT</version>
 
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.15.3</quarkus.platform.version>
-        <skipITs>true</skipITs>
         <surefire-plugin.version>3.3.1</surefire-plugin.version>
+        <jackson.version>2.18.3</jackson.version>
+
+        <opentelemetry.version>1.48.0</opentelemetry.version>
+        <opentelemetry-extension-annotations.version>1.18.0</opentelemetry-extension-annotations.version>
+
+        <slf4j.version>2.0.9</slf4j.version>
+        <eclipse-microprofile.version>3.0.1</eclipse-microprofile.version>
+
+        <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
+        <jakarta.inject.version>2.0.1</jakarta.inject.version>
+        <jakarta.interceptor.version>2.2.0</jakarta.interceptor.version>
+        <jakarta.enterprise.version>4.1.0</jakarta.enterprise.version>
+        <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
+
     </properties>
 
     <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>${quarkus.platform.group-id}</groupId>
-                <artifactId>${quarkus.platform.artifact-id}</artifactId>
-                <version>${quarkus.platform.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
     </dependencyManagement>
 
     <dependencies>
 
+        <!--        JAKARTA EE            -->
+
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc</artifactId>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${jakarta-annotation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>${jakarta.inject.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.interceptor</groupId>
+            <artifactId>jakarta.interceptor-api</artifactId>
+            <version>${jakarta.interceptor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>${jakarta.enterprise.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>${jakarta.ws.rs.version}</version>
         </dependency>
 
 
-        <!--        REST            -->
+        <!--        ECLIPSE MICROPROFILE            -->
 
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest</artifactId>
+            <groupId>org.eclipse.microprofile.rest.client</groupId>
+            <artifactId>microprofile-rest-client-api</artifactId>
+            <version>${eclipse-microprofile.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-openapi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-jackson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-client-jackson</artifactId>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <version>${eclipse-microprofile.version}</version>
         </dependency>
 
 
         <!--        LOGS            -->
 
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-opentelemetry</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.opentelemetry.instrumentation</groupId>
-            <artifactId>opentelemetry-jdbc</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-api</artifactId>
+            <version>${opentelemetry.version}</version>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-context</artifactId>
+            <version>${opentelemetry.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+            <version>${opentelemetry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-extension-annotations</artifactId>
+            <version>${opentelemetry-extension-annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+
+        <!--        Jackson            -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-afterburner</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
 
@@ -100,20 +152,6 @@
         <!--        TEST            -->
 
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.instancio</groupId>
             <artifactId>instancio-junit</artifactId>
             <version>5.2.1</version>
@@ -124,17 +162,14 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>${quarkus.platform.group-id}</groupId>
-                <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus.platform.version}</version>
-                <extensions>true</extensions>
+                <groupId>io.smallrye</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+                <version>3.2.7</version>
                 <executions>
                     <execution>
+                        <id>make-index</id>
                         <goals>
-                            <goal>build</goal>
-                            <goal>generate-code</goal>
-                            <goal>generate-code-tests</goal>
-                            <goal>native-image-agent</goal>
+                            <goal>jandex</goal>
                         </goals>
                     </execution>
                 </executions>

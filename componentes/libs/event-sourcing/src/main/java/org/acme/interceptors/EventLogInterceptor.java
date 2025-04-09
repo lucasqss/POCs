@@ -1,26 +1,31 @@
 package org.acme.interceptors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanContext;
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-import org.acme.annotations.EventLog;
+import org.acme.annotations.LogarEventos;
 import org.acme.dominio.entidades.RegistroEvento;
 import org.acme.rest.client.GerenciadorEventosClient;
+import org.acme.utils.OpenTelemetryUtils;
+import org.acme.utils.PomUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
-@EventLog
+@LogarEventos
 @Interceptor
-@Priority(Interceptor.Priority.APPLICATION)
+@Priority(Interceptor.Priority.LIBRARY_BEFORE)
 public class EventLogInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventLogInterceptor.class);
@@ -29,61 +34,71 @@ public class EventLogInterceptor {
     @RestClient
     GerenciadorEventosClient client;
 
-    @Inject
-    ObjectMapper objectMapper;
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);;
 
     @AroundInvoke
     public Object log(InvocationContext context) throws Exception {
-        RegistroEvento logEntry = createLogEntry(context);
+
+        LocalDateTime inicio = LocalDateTime.now();
 
         try {
             Object result = context.proceed();
-            logEntry.setResposta(result != null ? objectMapper.writeValueAsString(result) : "null");
+            LocalDateTime fim = LocalDateTime.now();
 
-            String json = objectMapper.writeValueAsString(logEntry);
+            RegistroEvento registroEvento = montarRegistroEventoSucesso(context, result, Duration.between(inicio, fim));
 
-            LOGGER.info("enviando evento: {}", json);
+            String json = objectMapper.writeValueAsString(registroEvento);
+
+            LOGGER.info("\n\nenviando evento: {} \n\n", json);
             client.enviarEvento(json);
 
             return result; // Retorne o resultado do método interceptado
         } catch (Exception e) {
             LOGGER.error("Erro ao processar o interceptor", e);
+            RegistroEvento registroEvento = montarRegistroEventoErro(context, e);
+            String json = objectMapper.writeValueAsString(registroEvento);
+
+            client.enviarEvento(json);
             throw e; // Repropague a exceção
         }
     }
 
-//    @AroundInvoke
-//    public void log(InvocationContext context) throws Exception {
-//
-//        RegistroEvento logEntry = createLogEntry(context);
-//
-//        try {
-//            Object result = context.proceed();
-//            logEntry.setResposta(result != null ? objectMapper.writeValueAsString(result) : "null");
-//
-//            String json = objectMapper.writeValueAsString(logEntry);
-//
-//            LOGGER.info(json);
-//            client.realizarPost(json);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private RegistroEvento montarRegistroEventoSucesso(InvocationContext context, Object result, Duration tempoExecucao) throws Exception {
 
-    private RegistroEvento createLogEntry(InvocationContext context) {
-        RegistroEvento logEntry = new RegistroEvento();
-        logEntry.setNomeMetodo(context.getMethod().getName());
-        logEntry.setParametros(Arrays.toString(context.getParameters()));
+        RegistroEvento registroEvento = new RegistroEvento();
 
-        // Extract the request ID from OpenTelemetry context
-        Span currentSpan = Span.current();
-        SpanContext spanContext = currentSpan.getSpanContext();
-        String requestId = spanContext.getTraceId();
-        logEntry.setIdRequisicao(requestId);
+        registroEvento.setMicrosservicoOrigem(PomUtils.getArtifactId());
+        registroEvento.setIdRequisicao(Span.current().getSpanContext().getTraceId());
+        registroEvento.setNomeMetodo(context.getMethod().getName());
+        registroEvento.setParametros(objectMapper.writeValueAsString(context.getParameters()));
+        registroEvento.setTimestamp(LocalDateTime.now());
+        registroEvento.setResposta(result != null ? objectMapper.writeValueAsString(result) : "null");
+        registroEvento.setTempoExecucao(tempoExecucao);
 
-        LOGGER.debug("entrada criada para o metodo: {}", logEntry.getNomeMetodo());
-        logEntry.setTimestamp(LocalDateTime.now());
-
-        return logEntry;
+        return registroEvento;
     }
+
+    private RegistroEvento montarRegistroEventoErro(InvocationContext context, Exception exception) throws Exception {
+
+        RegistroEvento registroEvento = new RegistroEvento();
+
+        registroEvento.setUserId(OpenTelemetryUtils.getUserId());
+        registroEvento.setIdRequisicao(Span.current().getSpanContext().getTraceId());
+        registroEvento.setNomeMetodo(context.getMethod().getName());
+        registroEvento.setParametros(objectMapper.writeValueAsString(context.getParameters()));
+        registroEvento.setTimestamp(LocalDateTime.now());
+
+        // Captura o stack trace completo como String
+        StringWriter stringWriter = new StringWriter();
+        exception.printStackTrace(new PrintWriter(stringWriter));
+        String fullStackTrace = stringWriter.toString();
+
+        // Serializa o stack trace completo
+        registroEvento.setExcecao(objectMapper.writeValueAsString(fullStackTrace));
+
+        return registroEvento;
+    }
+
 }

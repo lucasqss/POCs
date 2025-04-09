@@ -6,9 +6,15 @@
       <list>
         <option value="$PROJECT_DIR$/bancos-de-dados/pom.xml" />
         <option value="$PROJECT_DIR$/componentes/libs/event-sourcing/pom.xml" />
-        <option value="$PROJECT_DIR$/componentes/microsservicos/api-gateway/pom.xml" />
         <option value="$PROJECT_DIR$/componentes/microsservicos/app-persistence/pom.xml" />
+        <option value="$PROJECT_DIR$/dev-java-erro/pom.xml" />
+        <option value="$PROJECT_DIR$/componentes/microsservicos/app-gerenciador-eventos/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/dev-java-erro/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">

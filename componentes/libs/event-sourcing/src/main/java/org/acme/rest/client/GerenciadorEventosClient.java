@@ -12,7 +12,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 public interface GerenciadorEventosClient {
 
     @POST
-    @Path("/receber-evento")
+    @Path("/evento/receber")
     void enviarEvento(String json);
 
 }
