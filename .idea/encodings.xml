@@ -3,5 +3,11 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/bancos-de-dados/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/bancos-de-dados/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/componentes/libs/event-sourcing/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/componentes/libs/event-sourcing/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/componentes/microsservicos/api-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/componentes/microsservicos/api-gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/componentes/microsservicos/app-persistence/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/componentes/microsservicos/app-persistence/src/main/resources" charset="UTF-8" />
   </component>
 </project>
