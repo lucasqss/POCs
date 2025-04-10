@@ -8,12 +8,15 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
+
+import org.acme.annotations.LogarEventos;
 import org.acme.dto.ExemploDTO;
 import org.acme.service.AggregatorService;
 
 @Path("/aggregator")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@LogarEventos
 public class AggregatorRest {
 
     @Inject

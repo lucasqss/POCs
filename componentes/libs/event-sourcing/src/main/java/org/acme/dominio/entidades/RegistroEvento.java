@@ -1,5 +1,6 @@
 package org.acme.dominio.entidades;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,35 +11,24 @@ import java.time.LocalDateTime;
 @Setter
 public class RegistroEvento {
 
-    //ok
     private String idRequisicao;
 
-    //ok
     private String microsservicoOrigem;
 
+    //TODO: terminar de testar pegando esse cara do header
     private String userId;
-
-    //ok
 
     private String nomeMetodo;
 
-    //ok
+    @JsonRawValue
+    private String entrada;
 
-    private String parametros;
-
-    //ok
-
+    @JsonRawValue
     private String resposta;
-
-    //ok
 
     private String excecao;
 
-    //ok
-
     private Duration tempoExecucao;
-
-    //ok
 
     private LocalDateTime timestamp;
 

@@ -36,7 +36,8 @@ public class EventLogInterceptor {
 
     private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);;
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .configure(com.fasterxml.jackson.core.JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
 
     @AroundInvoke
     public Object log(InvocationContext context) throws Exception {
@@ -71,8 +72,8 @@ public class EventLogInterceptor {
 
         registroEvento.setMicrosservicoOrigem(PomUtils.getArtifactId());
         registroEvento.setIdRequisicao(Span.current().getSpanContext().getTraceId());
-        registroEvento.setNomeMetodo(context.getMethod().getName());
-        registroEvento.setParametros(objectMapper.writeValueAsString(context.getParameters()));
+        registroEvento.setNomeMetodo(context.getMethod().getDeclaringClass().getName() + "." + context.getMethod().getName());
+        registroEvento.setEntrada(objectMapper.writeValueAsString(context.getParameters()));
         registroEvento.setTimestamp(LocalDateTime.now());
         registroEvento.setResposta(result != null ? objectMapper.writeValueAsString(result) : "null");
         registroEvento.setTempoExecucao(tempoExecucao);
@@ -87,7 +88,7 @@ public class EventLogInterceptor {
         registroEvento.setUserId(OpenTelemetryUtils.getUserId());
         registroEvento.setIdRequisicao(Span.current().getSpanContext().getTraceId());
         registroEvento.setNomeMetodo(context.getMethod().getName());
-        registroEvento.setParametros(objectMapper.writeValueAsString(context.getParameters()));
+        registroEvento.setEntrada(objectMapper.writeValueAsString(context.getParameters()));
         registroEvento.setTimestamp(LocalDateTime.now());
 
         // Captura o stack trace completo como String

@@ -6,6 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="app-aggregator" />
+        <module name="api-gateway" />
         <module name="app-gerenciador-eventos" />
         <module name="event-sourcing" />
         <module name="app-persistence" />
@@ -14,7 +16,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="api-gateway" target="21" />
       <module name="api-gateway (1)" target="21" />
       <module name="dev-java-erro" target="21" />
       <module name="lib-event-sourcing" target="21" />
@@ -24,6 +25,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
       <module name="api-gateway (1)" options="-parameters" />
+      <module name="app-aggregator" options="-parameters" />
       <module name="app-exemplo-transacao" options="-parameters" />
       <module name="app-gerenciador-eventos" options="-parameters" />
       <module name="app-persistence" options="-parameters" />

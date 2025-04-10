@@ -9,6 +9,8 @@
         <option value="$PROJECT_DIR$/componentes/microsservicos/app-persistence/pom.xml" />
         <option value="$PROJECT_DIR$/dev-java-erro/pom.xml" />
         <option value="$PROJECT_DIR$/componentes/microsservicos/app-gerenciador-eventos/pom.xml" />
+        <option value="$PROJECT_DIR$/componentes/microsservicos/app-aggregator/pom.xml" />
+        <option value="$PROJECT_DIR$/componentes/microsservicos/api-gateway/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
